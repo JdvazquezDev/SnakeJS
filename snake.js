@@ -3,7 +3,7 @@ const context = myCanvas.getContext('2d');
 
 const SIZE = 20;
 
-const cuadrado = {
+const square = {
 	x: 0,
 	y: 0
 };
@@ -11,8 +11,8 @@ const cuadrado = {
 setInterval(draw, 1000); //1000ms = 1s
 
 function draw() {
-	drawObject(cuadrado);
-	cuadrado.x += SIZE;
+	drawObject(square);
+	square.x += SIZE;
 }
 
 function drawObject(obj) {
