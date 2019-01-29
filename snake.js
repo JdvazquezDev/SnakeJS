@@ -7,6 +7,8 @@ const head = {
     x: 0,
     y: 0
 };
+const body = [];
+
 let food = null; // x: y:
 
 let dx = 0;
@@ -20,6 +22,26 @@ function main() { // Logic
 }
 
 function update() {
+    //Save previous position
+    let prevX, prevY;
+    if (body.length >= 1) {
+        prevX = body[body.length - 1].x;
+        prevY = body[body.length - 1].y;
+    }else {
+       prevX = head.x; 
+       prevY = head.y;
+    }
+
+    // The body follows the snake
+    for (let i = body.length - 1; i >= 1; --i) {
+        body[i].x = body[i - 1].x; // elem.x 1 <- elem.x 0
+        body[i].y = body[i - 1].y; // elem.y 1 <- elem.y 0
+    }
+    if (body.length >= 1) {
+        body[0].x = head.x;
+        body[0].y = head.y;
+    }
+
     // Update coordinates of the snake's head
     head.x += dx;
     head.y += dy;
@@ -28,6 +50,7 @@ function update() {
     if (food && head.x === food.x && head.y === food.y) {
         food = null;
         // Increase the size of the snake
+        increaseSnakeSize(prevX, prevY);
     }
 
     // Generate food if it doesn't already exists
@@ -37,6 +60,13 @@ function update() {
             y: getRandomY()
         };
     }
+}
+
+function increaseSnakeSize(prevX, prevY) {
+    body.push({
+        x: prevX,
+        y: prevY
+    });
 }
 
 function getRandomX() {
@@ -52,9 +82,19 @@ function getRandomY() {
 }
 
 function draw() {
+    // Define black background
     context.fillStyle = 'black';
     context.fillRect(0, 0, myCanvas.width, myCanvas.height); // Clear context
+
+    // Head
     drawObject(head, 'lime');
+
+    // Body
+    body.forEach(
+        elem => drawObject(elem, 'lime')
+    );
+
+    // Food
     drawObject(food, 'white');
 }
 
