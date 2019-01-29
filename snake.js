@@ -22,14 +22,20 @@ function main() { // Logic
 }
 
 function update() {
+    const collisionDetected = checkSnakeCollision();
+    if (collisionDetected) {
+        gameOver();
+        return;
+    }
+
     //Save previous position
     let prevX, prevY;
     if (body.length >= 1) {
         prevX = body[body.length - 1].x;
         prevY = body[body.length - 1].y;
-    }else {
-       prevX = head.x; 
-       prevY = head.y;
+    } else {
+        prevX = head.x;
+        prevY = head.y;
     }
 
     // The body follows the snake
@@ -60,6 +66,36 @@ function update() {
             y: getRandomY()
         };
     }
+}
+
+function checkSnakeCollision() {
+    // Check if coordinates of head are the same as other elem of snake's body
+    for (let i = 0; i < body.length; i++) {
+        if (head.x === body[i].x && head.y === body[i].y) {
+            return true;
+        }
+    }
+
+    // Detect snake collisions against context limits
+    const topCollision = (head.y < 0); // x: ?, y: 0
+    const bottomCollision = (head.y > myCanvas.height); //x: ?, y: myCanvas.height
+    const leftCollision = (head.x < 0); // x: 0, y: ?
+    const rightCollision = (head.x > myCanvas.width); //x: myCanvas.width, y: ?
+
+    if (topCollision || bottomCollision || leftCollision || rightCollision) {
+        return true;
+    }
+
+    return false;
+}
+
+function gameOver() {
+    alert('You lost!');
+    head.x = 0;
+    head.y = 0;
+    dx = 0;
+    dy = 0;
+    body.length = 0; // By assigning length = 0 js understands that you want to empty the array
 }
 
 function increaseSnakeSize(prevX, prevY) {
@@ -107,26 +143,35 @@ function drawObject(obj, color) {
 document.addEventListener('keydown', moveSnake);
 
 function moveSnake(event) {
+    // Conditions restrict movement on the same axis
     switch (event.key) {
         case 'ArrowUp':
-            console.log('Move up');
-            dx = 0;
-            dy = -SIZE;
+            if (dy === 0) {
+                dx = 0;
+                dy = -SIZE;
+                console.log('Move up');
+            }
             break;
         case 'ArrowDown':
-            console.log('Move down');
-            dx = 0;
-            dy = SIZE;
+            if (dy === 0) {
+                dx = 0;
+                dy = SIZE;
+                console.log('Move down');
+            }
             break;
         case 'ArrowLeft':
-            console.log('Move left');
-            dx = -SIZE;
-            dy = 0;
+            if (dx === 0) {
+                dx = -SIZE;
+                dy = 0;
+                console.log('Move left');
+            }
             break;
         case 'ArrowRight':
-            console.log('Move right');
-            dx = SIZE;
-            dy = 0;
+            if (dx === 0) {
+                dx = SIZE;
+                dy = 0;
+                console.log('Move right');
+            }
             break;
     }
 }
